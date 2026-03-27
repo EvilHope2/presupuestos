@@ -3,344 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de Costos PRO</title>
+<title>Calculadora de Costos</title>
+
 <style>
-body{font-family:Arial;margin:0;background:#f2f2f2}
-.container{max-width:900px;margin:auto;padding:15px}
-.card{background:white;border-radius:12px;padding:15px;margin-bottom:15px;box-shadow:0 4px 10px rgba(0,0,0,0.08)}
-h1{text-align:center}
-input,select{width:100%;padding:10px;margin-top:6px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc}
-button{width:100%;padding:12px;border:none;border-radius:10px;background:#ff6b00;color:white;font-size:16px;margin-top:5px}
-.delete{background:#e53935}
-.edit{background:#1976d2}
-.save{background:#2e7d32}
-.clear{background:#555}
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{padding:8px;border-bottom:1px solid #eee;text-align:center;font-size:14px}
-.result{font-size:18px;font-weight:bold;margin-top:10px}
-.small{font-size:13px;color:#666}
-</style>
-</head>
-<body>
 
-<div class="container">
-<h1>Calculadora de Costos</h1>
-
-<div class="card">
-<h3>Receta</h3>
-<input id="producto" placeholder="Nombre del producto">
-<input id="unidades" type="number" placeholder="Cantidad de unidades producidas">
-<input id="pesoTotal" type="number" placeholder="Peso total producido (gramos)">
-<input id="merma" type="number" placeholder="Merma % (ej: 5)">
-</div>
-
-<div class="card">
-<h3>Ingredientes</h3>
-
-<select id="ingredienteBase">
-<option value="">Seleccionar ingrediente común</option>
-<option>Harina</option>
-<option>Azúcar</option>
-<option>Azúcar impalpable</option>
-<option>Huevo</option>
-<option>Leche</option>
-<option>Manteca</option>
-<option>Margarina</option>
-<option>Aceite</option>
-<option>Agua</option>
-<option>Sal</option>
-<option>Levadura</option>
-<option>Polvo de hornear</option>
-<option>Bicarbonato</option>
-<option>Esencia de vainilla</option>
-<option>Cacao</option>
-<option>Chocolate</option>
-<option>Dulce de leche</option>
-<option>Dulce de membrillo</option>
-<option>Crema</option>
-<option>Queso crema</option>
-<option>Almidón de maíz</option>
-<option>Avena</option>
-<option>Nueces</option>
-<option>Almendras</option>
-<option>Coco rallado</option>
-<option>Gelatina</option>
-<option>Mermelada</option>
-<option>Queso</option>
-<option>Salsa de tomate</option>
-</select>
-
-<input id="nombre" placeholder="Ingrediente personalizado">
-<input id="precio" type="number" placeholder="Precio del ingrediente">
-
-<select id="tipo">
-<option value="kg">Precio por KG</option>
-<option value="gr">Precio por GR</option>
-<option value="l">Precio por Litro</option>
-<option value="ml">Precio por ML</option>
-<option value="unidad">Precio por Unidad</option>
-<option value="docena">Precio por Docena</option>
-<option value="pack">Precio por Pack</option>
-</select>
-
-<input id="cantidad" type="number" placeholder="Cantidad usada">
-
-<button onclick="agregarIngrediente()">Agregar Ingrediente</button>
-</div>
-
-<div class="card">
-<h3>Lista de Ingredientes</h3>
-<table id="tabla"></table>
-<button class="clear" onclick="borrarIngredientes()">Borrar Ingredientes</button>
-</div>
-
-<div class="card">
-<h3>Costos Extra</h3>
-<input id="packaging" type="number" placeholder="Costo packaging">
-<input id="gas" type="number" placeholder="Gas / electricidad">
-<input id="otros" type="number" placeholder="Otros costos">
-</div>
-
-<div class="card">
-<h3>Ganancia</h3>
-<input id="margen" type="number" placeholder="Margen %">
-<button onclick="calcular()">Calcular</button>
-
-<div class="result">Costo total receta: $<span id="costoTotal">0</span></div>
-<div class="result">Costo por unidad: $<span id="costoUnidad">0</span></div>
-<div class="result">Costo por kilo: $<span id="costoKilo">0</span></div>
-<div class="result">Precio sugerido: $<span id="precioVenta">0</span></div>
-
-<button class="save" onclick="guardarReceta()">Guardar Receta</button>
-</div>
-
-<div class="card">
-<h3>Historial de Productos</h3>
-<table id="historial"></table>
-</div>
-
-<p class="small">Todos los datos se guardan en tu celular.</p>
-
-</div>
-
-<script>
-
-let ingredientes = JSON.parse(localStorage.getItem('ingredientes')) || []
-let historial = JSON.parse(localStorage.getItem('historial')) || []
-
-function guardarIngredientes(){
-localStorage.setItem('ingredientes',JSON.stringify(ingredientes))
+body{
+font-family: Arial, Helvetica, sans-serif;
+background:#f4f4f4;
+margin:0;
+padding:20px;
 }
 
-function guardarHistorial(){
-localStorage.setItem('historial',JSON.stringify(historial))
+.container{
+max-width:500px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
-function calcularCosto(precio,tipo,cantidad){
-
-if(tipo==='kg') return (precio/1000)*cantidad
-if(tipo==='gr') return precio*cantidad
-
-if(tipo==='l') return (precio/1000)*cantidad
-if(tipo==='ml') return precio*cantidad
-
-if(tipo==='unidad') return precio*cantidad
-
-if(tipo==='docena') return (precio/12)*cantidad
-
-if(tipo==='pack') return precio*cantidad
-
-return 0
+h1{
+text-align:center;
+margin-bottom:20px;
 }
 
-function agregarIngrediente(){
-
-let base=document.getElementById('ingredienteBase').value
-let nombre=document.getElementById('nombre').value
-
-if(base) nombre=base
-
-let precio=parseFloat(document.getElementById('precio').value)
-let tipo=document.getElementById('tipo').value
-let cantidad=parseFloat(document.getElementById('cantidad').value)
-
-if(!nombre || !precio || !cantidad) return
-
-let costo=calcularCosto(precio,tipo,cantidad)
-
-ingredientes.push({nombre,costo})
-
-guardarIngredientes()
-renderIngredientes()
-
+label{
+font-weight:bold;
+margin-top:10px;
+display:block;
 }
 
-function eliminarIngrediente(index){
-ingredientes.splice(index,1)
-guardarIngredientes()
-renderIngredientes()
-}
-
-function borrarIngredientes(){
-ingredientes=[]
-guardarIngredientes()
-renderIngredientes()
-}
-
-function renderIngredientes(){
-
-let tabla=document.getElementById('tabla')
-
-let html=`
-<tr>
-<th>Ingrediente</th>
-<th>Costo</th>
-<th>Eliminar</th>
-</tr>
-`
-
-let total=0
-
-ingredientes.forEach((i,index)=>{
-
-html+=`
-<tr>
-<td>${i.nombre}</td>
-<td>$${i.costo.toFixed(2)}</td>
-<td><button class="delete" onclick="eliminarIngrediente(${index})">X</button></td>
-</tr>
-`
-
- total+=i.costo
-
-})
-
-tabla.innerHTML=html
-
-document.getElementById('costoTotal').innerText=total.toFixed(2)
-}
-
-function calcular(){
-
-let total=ingredientes.reduce((a,b)=>a+b.costo,0)
-
-let packaging=parseFloat(document.getElementById('packaging').value)||0
-let gas=parseFloat(document.getElementById('gas').value)||0
-let otros=parseFloat(document.getElementById('otros').value)||0
-
-let merma=parseFloat(document.getElementById('merma').value)||0
-
-let margen=parseFloat(document.getElementById('margen').value)||0
-let unidades=parseFloat(document.getElementById('unidades').value)||1
-let peso=parseFloat(document.getElementById('pesoTotal').value)||0
-
-let costoFinal=total+packaging+gas+otros
-
-if(merma>0){
-
-costoFinal=costoFinal*(1+(merma/100))
-
-}
-
-let costoUnidad=costoFinal/unidades
-
-let costoKilo=0
-
-if(peso>0){
-
-let kilos=peso/1000
-costoKilo=costoFinal/kilos
-
-}
-
-let venta=costoUnidad*(1+(margen/100))
-
-
-document.getElementById('costoTotal').innerText=costoFinal.toFixed(2)
-
-document.getElementById('costoUnidad').innerText=costoUnidad.toFixed(2)
-
-document.getElementById('costoKilo').innerText=costoKilo.toFixed(2)
-
-document.getElementById('precioVenta').innerText=venta.toFixed(2)
-
-}
-
-function guardarReceta(){
-
-let nombre=document.getElementById('producto').value
-
-if(!nombre) return
-
-let total=document.getElementById('costoTotal').innerText
-let unidad=document.getElementById('costoUnidad').innerText
-let venta=document.getElementById('precioVenta').innerText
-
-historial.push({nombre,total,unidad,venta})
-
-guardarHistorial()
-renderHistorial()
-
-}
-
-function eliminarReceta(index){
-
-historial.splice(index,1)
-
-guardarHistorial()
-renderHistorial()
-
-}
-
-function editarReceta(index){
-
-let r=historial[index]
-
-document.getElementById('producto').value=r.nombre
-
-}
-
-function renderHistorial(){
-
-let tabla=document.getElementById('historial')
-
-let html=`
-<tr>
-<th>Producto</th>
-<th>Costo</th>
-<th>Costo Unidad</th>
-<th>Precio</th>
-<th>Acciones</th>
-</tr>
-`
-
-historial.forEach((h,index)=>{
-
-html+=`
-<tr>
-<td>${h.nombre}</td>
-<td>$${h.total}</td>
-<td>$${h.unidad}</td>
-<td>$${h.venta}</td>
-<td>
-<button class="edit" onclick="editarReceta(${index})">Editar</button>
-<button class="delete" onclick="eliminarReceta(${index})">X</button>
-</td>
-</tr>
-`
-
-})
-
-tabla.innerHTML=html
-
-}
-
-renderIngredientes()
-renderHistorial()
-
-</script>
-
-</body>
+input,select,button{
+width:100%;
+padding:10px;
+margin-top:5px;
+border-radius:6px;
 </html>
-
-
