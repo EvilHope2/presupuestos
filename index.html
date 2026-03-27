@@ -1,3 +1,15 @@
+# Calculadora de Costos para Comida
+
+Aplicación web simple pensada para **panadería, pizzería y repostería**.
+Funciona **100% en el celular** y **guarda todo en el navegador** (no usa base de datos).
+
+Diseño simple, claro y fácil de usar para cualquier persona.
+
+---
+
+## Archivo único (index.html)
+
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -39,4 +51,182 @@ width:100%;
 padding:10px;
 margin-top:5px;
 border-radius:6px;
+border:1px solid #ccc;
+font-size:16px;
+}
+
+button{
+background:#2c7be5;
+color:white;
+border:none;
+margin-top:15px;
+font-weight:bold;
+}
+
+button:hover{
+background:#1a68d1;
+}
+
+.resultado{
+margin-top:20px;
+padding:15px;
+background:#f1f6ff;
+border-radius:8px;
+}
+
+.receta{
+background:#fafafa;
+padding:10px;
+border-radius:6px;
+margin-top:10px;
+border:1px solid #ddd;
+}
+
+.receta button{
+margin-top:5px;
+background:#e74c3c;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Calculadora de Costos</h1>
+
+<label>Nombre del producto</label>
+<input id="nombre">
+
+<label>Costo de producción ($)</label>
+<input id="costo" type="number">
+
+<label>Merma (%)</label>
+<input id="merma" type="number" value="0">
+
+<label>Margen de ganancia (%)</label>
+<input id="margen" type="number" value="50">
+
+<button onclick="calcular()">Calcular</button>
+
+<div class="resultado" id="resultado"></div>
+
+<button onclick="guardarReceta()">Guardar producto</button>
+
+<h2>Historial</h2>
+
+<div id="historial"></div>
+
+</div>
+
+<script>
+
+let recetas = JSON.parse(localStorage.getItem("recetas")) || [];
+
+function calcular(){
+
+let costo = parseFloat(document.getElementById("costo").value);
+let merma = parseFloat(document.getElementById("merma").value);
+let margen = parseFloat(document.getElementById("margen").value);
+
+let costoMerma = costo * (1 + merma/100);
+let precio = costoMerma * (1 + margen/100);
+
+let html = `
+<b>Costo con merma:</b> $${costoMerma.toFixed(2)}<br>
+<b>Precio sugerido:</b> $${precio.toFixed(2)}
+`;
+
+resultado.innerHTML = html;
+
+window.precioActual = precio;
+
+}
+
+function guardarReceta(){
+
+let nombre = document.getElementById("nombre").value;
+
+if(!nombre || !window.precioActual) return;
+
+recetas.push({
+
+nombre:nombre,
+precio:window.precioActual
+
+});
+
+localStorage.setItem("recetas",JSON.stringify(recetas));
+
+mostrarRecetas();
+
+}
+
+function eliminar(i){
+
+recetas.splice(i,1);
+
+localStorage.setItem("recetas",JSON.stringify(recetas));
+
+mostrarRecetas();
+
+}
+
+function mostrarRecetas(){
+
+let contenedor = document.getElementById("historial");
+
+contenedor.innerHTML="";
+
+recetas.forEach((r,i)=>{
+
+contenedor.innerHTML += `
+
+<div class="receta">
+
+<b>${r.nombre}</b><br>
+Precio sugerido: $${r.precio.toFixed(2)}
+
+<button onclick="eliminar(${i})">Eliminar</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+mostrarRecetas();
+
+</script>
+
+</body>
 </html>
+```
+
+---
+
+## Ventajas de esta versión
+
+✔ Muy fácil de usar  
+✔ Diseño limpio hecho manualmente  
+✔ Funciona perfecto en celular  
+✔ No necesita internet  
+✔ Guarda todo en el celular  
+✔ Permite eliminar productos
+
+---
+
+## Si querés en el próximo paso puedo mejorarlo mucho más
+
+Puedo agregarte:
+
+• ingredientes con gramos / kilos / ml  
+• cálculo automático por unidad  
+• lista grande de ingredientes de panadería  
+• modo producción (100 / 500 / 1000 unidades)  
+• app instalable en Android
+
+Y quedaría una **calculadora profesional para negocios de comida**.
